@@ -2818,6 +2818,40 @@ void Score::cmdSlashRhythm()
       }
 
 //---------------------------------------------------------
+//   cmdHamburgMusicNotation
+//   converts rhythms in selected region to HMN
+//---------------------------------------------------------
+
+void Score::cmdHamburgMusicNotation()
+      {
+      qDebug("Toggle hamburg music notation");
+      QList<Chord*> chords;
+      // loop through all notes in selection
+      foreach (Element* e, selection().elements()) {
+            if (e->type() == ElementType::NOTE) {
+                  Note* n = toNote(e);
+                  if (n->noteType() != NoteType::NORMAL)
+                        continue;
+                  Chord* c = n->chord();
+
+                  // check for duplicates (chords with multiple notes)
+                  if (chords.contains(c))
+                        continue;
+                  chords.append(c);
+                  // toggle slash setting
+                  if (c->links()) {
+                        for (ScoreElement* e : *c->links()) {
+                              Chord* lc = static_cast<Chord*>(e);
+                              lc->setHamburgMusicNotation(!lc->hamburgMusicNotation());
+                              }
+                        }
+                  else
+                        c->setHamburgMusicNotation(!c->hamburgMusicNotation());
+                  }
+            }
+      }
+
+//---------------------------------------------------------
 //   cmdResequenceRehearsalMarks
 ///   resequences rehearsal marks within a range selection
 ///   or, if nothing is selected, the entire score
@@ -3560,6 +3594,7 @@ void Score::cmd(const QAction* a, EditData& ed)
             { "grace32after",               [this]{ cmdAddGrace(NoteType::GRACE32_AFTER, MScore::division / 8); }},
             { "explode",                    [this]{ cmdExplode();                                               }},
             { "implode",                    [this]{ cmdImplode();                                               }},
+            { "hamburg-music-notation",     [this]{ cmdHamburgMusicNotation();                                             }},
             { "slash-fill",                 [this]{ cmdSlashFill();                                             }},
             { "slash-rhythm",               [this]{ cmdSlashRhythm();                                           }},
             { "resequence-rehearsal-marks", [this]{ cmdResequenceRehearsalMarks();                              }},

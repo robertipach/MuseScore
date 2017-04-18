@@ -213,6 +213,7 @@ Chord::Chord(Score* s)
       _stemDirection    = Direction::AUTO;
       _arpeggio         = 0;
       _tremolo          = 0;
+      _hmnActive        = false;
       _endsGlissando    = false;
       _noteType         = NoteType::NORMAL;
       _stemSlash        = 0;
@@ -252,6 +253,7 @@ Chord::Chord(const Chord& c, bool link)
       _arpeggio      = 0;
       _stemSlash     = 0;
       _tremolo       = 0;
+      _hmnActive     = false;
 
       _graceIndex     = c._graceIndex;
       _noStem         = c._noStem;
@@ -3268,6 +3270,94 @@ void Chord::setSlash(bool flag, bool stemless)
                   n->undoChangeProperty(P_ID::VISIBLE, false);
             }
       }
+//
+bool Chord::hamburgMusicNotation() {
+    return _hmnActive;
+}
+
+//---------------------------------------------------------
+//   setHamburgMusicNotation
+//---------------------------------------------------------
+
+void Chord::setHamburgMusicNotation(bool flag)
+      {  
+      if (!flag) {
+            qDebug("Disable hamburg music notation on chord");
+            // restore to normal
+            for (Note* n : _notes) {
+                  n->undoChangeProperty(P_ID::HEAD_GROUP, int(NoteHead::Group::HEAD_NORMAL));
+                  n->undoChangeProperty(P_ID::FIXED, false);
+                  n->undoChangeProperty(P_ID::FIXED_LINE, 0);
+            }
+
+            this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF());
+            _hmnActive = false;
+            return;
+        }
+
+      // set stem to auto (mostly important for rhythmic notation on drum staves)
+      undoChangeProperty(P_ID::STEM_DIRECTION, Direction_AUTO);
+
+      // voice-dependent attributes - line, size, offset, head
+      qDebug("Enable hamburg music notation on chord");
+      int ns = _notes.size();
+      for (int i = 0; i < ns; ++i) {
+            Note* n = _notes[i];
+            NoteHead::Group head = NoteHead::Group::HEAD_NORMAL;
+            int line = n->line();
+            qDebug("Note pitch: %d", n->pitch());
+            switch(n->pitch()) {
+            case 48: { line = 16; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 49: { line = 16; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 50: { line = 15; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 51: { line = 14; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 52: { line = 14; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 53: { line = 13; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 54: { line = 12; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 55: { line = 12; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 56: { line = 11; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 57: { line = 10; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 58: { line = 10; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 59: { line = 9; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 60: { line = 8; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 61: { line = 8; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 62: { line = 7; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 63: { line = 6; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 64: { line = 6; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 65: { line = 5; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 66: { line = 4; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 67: { line = 4; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 68: { line = 3; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 69: { line = 2; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 70: { line = 2; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 71: { line = 1; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 72: { line = 0; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 73: { line = 0; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 74: { line = -1; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 75: { line = -2; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 76: { line = -2; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 77: { line = -3; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 78: { line = -4; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 79: { line = -4; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 80: { line = -5; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 81: { line = -6; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 82: { line = -6; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 83: { line = -7; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            default: break;
+            }
+            if (line != n->line()) {
+                qDebug("Setting fixed line to %d", line);
+                qreal stemOffsetY = (qreal)(line - n->line());
+                n->undoChangeProperty(P_ID::HEAD_GROUP, static_cast<int>(head));
+                n->undoChangeProperty(P_ID::FIXED, true);
+                n->undoChangeProperty(P_ID::FIXED_LINE, line);
+                // TODO: Proper stem offset even for multi-note chords
+                this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
+            }
+         }
+
+      _hmnActive = true;
+     }
 
 //---------------------------------------------------------
 //  updateEndsGlissando
