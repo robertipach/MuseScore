@@ -1161,6 +1161,7 @@ MuseScore::MuseScore()
       menuTools->addMenu(menuVoices);
       menuTools->addSeparator();
 
+      menuTools->addAction(getAction("hamburg-music-notation"));
       menuTools->addAction(getAction("slash-fill"));
       menuTools->addAction(getAction("slash-rhythm"));
       menuTools->addSeparator();

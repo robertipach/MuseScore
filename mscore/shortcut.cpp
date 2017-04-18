@@ -3383,6 +3383,16 @@ Shortcut Shortcut::_sc[] = {
       {
          MsWidget::SCORE_TAB,
          STATE_NORMAL,
+         "hamburg-music-notation",
+         QT_TRANSLATE_NOOP("action","Toggle Hamburg Music Notation"),
+         QT_TRANSLATE_NOOP("action","Toggle hamburg music notation"),
+         0,
+         Icons::Invalid_ICON,
+         Qt::WindowShortcut
+         },
+      {
+         MsWidget::SCORE_TAB,
+         STATE_NORMAL,
          "slash-rhythm",
          QT_TRANSLATE_NOOP("action","Toggle Rhythmic Slash Notation"),
          QT_TRANSLATE_NOOP("action","Toggle rhythmic slash notation"),

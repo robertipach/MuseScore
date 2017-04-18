@@ -1105,6 +1105,7 @@ class Score : public QObject, ScoreElement {
       void cmdExplode();
       void cmdImplode();
       void cmdSlashFill();
+      void cmdHamburgMusicNotation();
       void cmdSlashRhythm();
       void cmdResequenceRehearsalMarks();
       void cmdExchangeVoice(int, int);
