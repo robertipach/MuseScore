@@ -52,6 +52,7 @@
 #include "stringdata.h"
 #include "beam.h"
 #include "slur.h"
+#include "stafftext.h"
 
 namespace Ms {
 
@@ -2998,13 +2999,21 @@ void Chord::setHamburgMusicNotation(bool flag)
                   n->undoChangeProperty(P_ID::FIXED, false);
                   n->undoChangeProperty(P_ID::FIXED_LINE, 0);
             }
+            // Remove text
+            qDebug("Removing texts");
+            for (Text* text : _hmnTexts) {
+                qDebug("Removing text: %s", text->plainText().toStdString().c_str());
+                this->segment()->remove(text);
+            }
+            _hmnTexts.clear();
+            _hmnTexts.shrink_to_fit();
 
             this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF());
             _hmnActive = false;
             return;
         }
 
-      // set stem to auto (mostly important for rhythmic notation on drum staves)
+      // set stem to auto
       undoChangeProperty(P_ID::STEM_DIRECTION, Direction_AUTO);
 
       // voice-dependent attributes - line, size, offset, head
@@ -3014,44 +3023,45 @@ void Chord::setHamburgMusicNotation(bool flag)
             Note* n = _notes[i];
             NoteHead::Group head = NoteHead::Group::HEAD_NORMAL;
             int line = n->line();
+            QString description;
             qDebug("Note pitch: %d", n->pitch());
             switch(n->pitch()) {
-            case 48: { line = 16; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 49: { line = 16; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 50: { line = 15; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 51: { line = 14; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 52: { line = 14; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 53: { line = 13; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 54: { line = 12; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 55: { line = 12; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 56: { line = 11; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 57: { line = 10; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 58: { line = 10; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 59: { line = 9; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 60: { line = 8; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 61: { line = 8; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 62: { line = 7; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 63: { line = 6; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 64: { line = 6; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 65: { line = 5; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 66: { line = 4; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 67: { line = 4; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 68: { line = 3; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 69: { line = 2; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 70: { line = 2; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 71: { line = 1; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 72: { line = 0; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 73: { line = 0; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 74: { line = -1; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 75: { line = -2; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 76: { line = -2; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 77: { line = -3; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 78: { line = -4; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 79: { line = -4; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 80: { line = -5; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 81: { line = -6; head = NoteHead::Group::HEAD_NORMAL; }; break;
-            case 82: { line = -6; head = NoteHead::Group::HEAD_CROSS; }; break;
-            case 83: { line = -7; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 48: { description = "1"; line = 16; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 49: { description = "2"; line = 16; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 50: { description = "3"; line = 15; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 51: { description = "4"; line = 14; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 52: { description = "5"; line = 14; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 53: { description = "6"; line = 13; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 54: { description = "7"; line = 12; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 55: { description = "8"; line = 12; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 56: { description = "9"; line = 11; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 57: { description = "A"; line = 10; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 58: { description = "B"; line = 10; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 59: { description = "0"; line = 9; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 60: { description = "1"; line = 8; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 61: { description = "2"; line = 8; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 62: { description = "3"; line = 7; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 63: { description = "4"; line = 6; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 64: { description = "5"; line = 6; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 65: { description = "6"; line = 5; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 66: { description = "7"; line = 4; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 67: { description = "8"; line = 4; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 68: { description = "9"; line = 3; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 69: { description = "A"; line = 2; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 70: { description = "B"; line = 2; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 71: { description = "0"; line = 1; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 72: { description = "1"; line = 0; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 73: { description = "2"; line = 0; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 74: { description = "3"; line = -1; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 75: { description = "4"; line = -2; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 76: { description = "5"; line = -2; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 77: { description = "6"; line = -3; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 78: { description = "7"; line = -4; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 79: { description = "8"; line = -4; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 80: { description = "9"; line = -5; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 81: { description = "A"; line = -6; head = NoteHead::Group::HEAD_NORMAL; }; break;
+            case 82: { description = "B"; line = -6; head = NoteHead::Group::HEAD_CROSS; }; break;
+            case 83: { description = "0"; line = -7; head = NoteHead::Group::HEAD_NORMAL; }; break;
             default: break;
             }
             if (line != n->line()) {
@@ -3063,6 +3073,16 @@ void Chord::setHamburgMusicNotation(bool flag)
                 // TODO: Proper stem offset even for multi-note chords
                 this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
             }
+
+            // Add text
+            Text* s = new StaffText(this->score());
+            s->setTrack(this->track());
+            s->initSubStyle(SubStyle::STAFF);
+            s->setParent(this->segment());
+            s->setPlainText(description);
+            s->setPlacement(Placement::BELOW);
+            this->score()->undoAddElement(s);
+            this->_hmnTexts.push_back(s);
          }
 
       _hmnActive = true;
