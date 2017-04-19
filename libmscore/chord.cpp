@@ -3008,7 +3008,9 @@ void Chord::setHamburgMusicNotation(bool flag)
             _hmnTexts.clear();
             _hmnTexts.shrink_to_fit();
 
-            this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF());
+            if (!this->noStem()) {
+                this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF());
+            }
             _hmnActive = false;
             return;
         }
@@ -3071,7 +3073,9 @@ void Chord::setHamburgMusicNotation(bool flag)
                 n->undoChangeProperty(P_ID::FIXED, true);
                 n->undoChangeProperty(P_ID::FIXED_LINE, line);
                 // TODO: Proper stem offset even for multi-note chords
-                this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
+                if (!this->noStem() && !this->beam()) {
+                    this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
+                }
             }
 
             // Add text
