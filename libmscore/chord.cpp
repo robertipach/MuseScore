@@ -3326,15 +3326,15 @@ void Chord::setHamburgMusicNotation(bool flag)
                 case 0: { description = "1"; line = 8; head = NoteHead::Group::HEAD_NORMAL; } break;
                 case 1: { description = "2"; line = 8; head = NoteHead::Group::HEAD_CROSS; } break;
                 case 2: { description = "3"; line = 7; head = NoteHead::Group::HEAD_NORMAL; } break;
-                case 3: { description = "4"; line = 6; head = NoteHead::Group::HEAD_CROSS; } break;
+                case 3: { description = "4"; line = 7; head = NoteHead::Group::HEAD_CROSS; } break;
                 case 4: { description = "5"; line = 6; head = NoteHead::Group::HEAD_NORMAL; } break;
                 case 5: { description = "6"; line = 5; head = NoteHead::Group::HEAD_NORMAL; } break;
-                case 6: { description = "7"; line = 4; head = NoteHead::Group::HEAD_CROSS; } break;
+                case 6: { description = "7"; line = 5; head = NoteHead::Group::HEAD_CROSS; } break;
                 case 7: { description = "8"; line = 4; head = NoteHead::Group::HEAD_NORMAL; } break;
-                case 8: { description = "9"; line = 3; head = NoteHead::Group::HEAD_CROSS; } break;
-                case 9: { description = "A"; line = 2; head = NoteHead::Group::HEAD_NORMAL; } break;
-                case 10: { description = "B"; line = 2; head = NoteHead::Group::HEAD_CROSS; } break;
-                case 11: { description = "0"; line = 1; head = NoteHead::Group::HEAD_NORMAL; } break;
+                case 8: { description = "9"; line = 4; head = NoteHead::Group::HEAD_CROSS; } break;
+                case 9: { description = "A"; line = 3; head = NoteHead::Group::HEAD_NORMAL; } break;
+                case 10: { description = "B"; line = 3; head = NoteHead::Group::HEAD_CROSS; } break;
+                case 11: { description = "0"; line = 2; head = NoteHead::Group::HEAD_NORMAL; } break;
             }
             // Adjust line for Octave height (C4 displayed on line 8 i.e. bottom line)
             int pitchOctave = n->pitch() / 12;
