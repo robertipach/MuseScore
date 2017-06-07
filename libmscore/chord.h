@@ -147,8 +147,10 @@ class Chord final : public ChordRest {
       StemSlash* stemSlash() const           { return _stemSlash; }
       bool slash();
       void setSlash(bool flag, bool stemless);
-      bool hamburgMusicNotation();
-      void setHamburgMusicNotation(bool flag);
+
+      bool hmnActive() const      { return _hmnActive; }
+      void setHmnActive(bool flag);
+
       virtual void removeMarkings(bool keepTremolo = false) override;
 
       const QVector<Chord*>& graceNotes() const { return _graceNotes; }

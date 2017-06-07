@@ -328,7 +328,8 @@ enum class Pid {
       VOICE,
       POSITION,
 
-      END
+      END,
+      HMN_ACTIVE
       };
 
 enum class P_TYPE : char {

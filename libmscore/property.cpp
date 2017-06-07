@@ -310,7 +310,8 @@ static constexpr PropertyMetaData propertyList[] = {
       { Pid::VOICE,                   0,                         false, "voice",                 P_TYPE::INT,                 DUMMY_QT_TRANSLATE_NOOP("propertyName", "voice")            },
       { Pid::POSITION,                0,                         false, "position",              P_TYPE::FRACTION,            DUMMY_QT_TRANSLATE_NOOP("propertyName", "position")         },
 
-      { Pid::END, "++end++", false, "++end++", P_TYPE::INT, DUMMY_QT_TRANSLATE_NOOP("propertyName", "<invalid property>") }
+      { Pid::END, "++end++", false, "++end++", P_TYPE::INT, DUMMY_QT_TRANSLATE_NOOP("propertyName", "<invalid property>") },
+	  { Pid::HMN_ACTIVE,              "hmn_active",              false, "hmnActive",             P_TYPE::BOOL }
       };
 
 //---------------------------------------------------------
