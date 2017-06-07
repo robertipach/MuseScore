@@ -3306,6 +3306,7 @@ void Chord::setHmnActive(bool flag)
 
             if (!this->noStem()) {
                 this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF());
+                this->stem()->undoChangeProperty(P_ID::AUTOPLACE, true);
             }
             _hmnActive = false;
             return;
@@ -3358,6 +3359,7 @@ void Chord::setHmnActive(bool flag)
             // TODO: Proper stem offset even for multi-note chords
             if (!this->noStem() && !this->beam()) {
                 this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
+                this->stem()->undoChangeProperty(P_ID::AUTOPLACE, false);
             }
 
             // Add text
@@ -3367,7 +3369,6 @@ void Chord::setHmnActive(bool flag)
             s->setParent(this->segment());
             s->setPlainText(description);
             s->setPlacement(Placement::BELOW);
-            s->
             this->score()->undoAddElement(s);
             this->_hmnTexts.push_back(s);
          }

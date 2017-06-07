@@ -2819,7 +2819,7 @@ void Score::cmdSlashRhythm()
 
 //---------------------------------------------------------
 //   cmdHamburgMusicNotation
-//   converts rhythms in selected region to HMN
+///   converts rhythms in selected region to HMN
 //---------------------------------------------------------
 
 void Score::cmdHamburgMusicNotation()
