@@ -956,6 +956,8 @@ void Chord::write(XmlWriter& xml) const
                   break;
             }
 
+      if (_hmnActive)
+            xml.tag("hmnActive", _hmnActive);
       if (_noStem)
             xml.tag("noStem", _noStem);
       else if (_stem && (_stem->isUserModified() || (_stem->userLen() != 0.0)))
@@ -1057,6 +1059,8 @@ bool Chord::readProperties(XmlReader& e)
             }
       else if (readProperty(tag, e, P_ID::STEM_DIRECTION))
             ;
+      else if (tag == "hmnActive")
+            _hmnActive = e.readInt();
       else if (tag == "noStem")
             _noStem = e.readInt();
       else if (tag == "Arpeggio") {
@@ -2636,6 +2640,7 @@ QVariant Chord::getProperty(P_ID propertyId) const
             case P_ID::NO_STEM:        return noStem();
             case P_ID::SMALL:          return small();
             case P_ID::STEM_DIRECTION: return QVariant::fromValue<Direction>(stemDirection());
+            case P_ID::HMN_ACTIVE:     return hmnActive();
             default:
                   return ChordRest::getProperty(propertyId);
             }
@@ -2671,6 +2676,9 @@ bool Chord::setProperty(P_ID propertyId, const QVariant& v)
                   break;
             case P_ID::STEM_DIRECTION:
                   setStemDirection(v.value<Direction>());
+                  break;
+            case P_ID::HMN_ACTIVE:
+                  setHmnActive(v.toBool());
                   break;
             default:
                   return ChordRest::setProperty(propertyId, v);
@@ -3271,16 +3279,12 @@ void Chord::setSlash(bool flag, bool stemless)
                   n->undoChangeProperty(P_ID::VISIBLE, false);
             }
       }
-//
-bool Chord::hamburgMusicNotation() {
-    return _hmnActive;
-}
 
 //---------------------------------------------------------
 //   setHamburgMusicNotation
 //---------------------------------------------------------
 
-void Chord::setHamburgMusicNotation(bool flag)
+void Chord::setHmnActive(bool flag)
       {  
       if (!flag) {
             qDebug("Disable hamburg music notation on chord");
@@ -3363,6 +3367,7 @@ void Chord::setHamburgMusicNotation(bool flag)
             s->setParent(this->segment());
             s->setPlainText(description);
             s->setPlacement(Placement::BELOW);
+            s->
             this->score()->undoAddElement(s);
             this->_hmnTexts.push_back(s);
          }
