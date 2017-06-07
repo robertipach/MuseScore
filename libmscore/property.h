@@ -300,7 +300,8 @@ enum class P_ID {
       END_FONT_UNDERLINE,
       END_TEXT_OFFSET,
 
-      END
+      END,
+      HMN_ACTIVE
       };
 
 enum class P_TYPE : char {

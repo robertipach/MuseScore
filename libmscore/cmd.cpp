@@ -2830,16 +2830,21 @@ void Score::cmdHamburgMusicNotation()
                   if (chords.contains(c))
                         continue;
                   chords.append(c);
-                  // toggle slash setting
+                  // toggle HMN setting
                   if (c->links()) {
                         for (ScoreElement* e : *c->links()) {
                               Chord* lc = static_cast<Chord*>(e);
-                              lc->setHamburgMusicNotation(!lc->hamburgMusicNotation());
+                              bool hmnActive = lc->hmnActive();
+                              lc->undoChangeProperty(P_ID::HMN_ACTIVE, !hmnActive);
+                              //lc->setHamburgMusicNotation(!lc->hamburgMusicNotation());
                               }
                         }
-                  else
-                        c->setHamburgMusicNotation(!c->hamburgMusicNotation());
+                  else {
+                      bool hmnActive = c->hmnActive();
+                      c->undoChangeProperty(P_ID::HMN_ACTIVE, !hmnActive);
+                        //c->setHamburgMusicNotation(!c->hamburgMusicNotation());
                   }
+            }
             }
       }
 
