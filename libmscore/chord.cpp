@@ -3284,9 +3284,9 @@ void Chord::setSlash(bool flag, bool stemless)
 //   setHamburgMusicNotation
 //---------------------------------------------------------
 
-void Chord::setHmnActive(bool flag)
+void Chord::toggleHmn(bool activate)
       {  
-      if (!flag) {
+      if (!activate) {
             qDebug("Disable hamburg music notation on chord");
             // restore to normal
             for (Note* n : _notes) {
@@ -3297,23 +3297,25 @@ void Chord::setHmnActive(bool flag)
 
             // Remove text
             qDebug("Removing texts");
-            for (Text* text : _hmnTexts) {
-                qDebug("Removing text: %s", text->plainText().toStdString().c_str());
-                this->score()->undoRemoveElement(text);
+            for (Element* elem : this->segment()->annotations()) {
+                if (elem != NULL && elem->type() == ElementType::STAFF_TEXT) {
+                    StaffText* text = static_cast<StaffText*>(elem);
+                    if (text->hmnGenerated()) {
+                        this->score()->undoRemoveElement(text);
+                    }
+                }
             }
-            _hmnTexts.clear();
-            _hmnTexts.shrink_to_fit();
 
             if (!this->noStem()) {
                 this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF());
                 this->stem()->undoChangeProperty(P_ID::AUTOPLACE, true);
             }
-            _hmnActive = false;
+            this->undoChangeProperty(P_ID::HMN_ACTIVE, false);
             return;
         }
 
       // set stem to auto
-      undoChangeProperty(P_ID::STEM_DIRECTION, Direction_AUTO);
+      //undoChangeProperty(P_ID::STEM_DIRECTION, Direction_AUTO);
 
       // voice-dependent attributes - line, size, offset, head
       qDebug("Enable hamburg music notation on chord");
@@ -3363,17 +3365,17 @@ void Chord::setHmnActive(bool flag)
             }
 
             // Add text
-            Text* s = new StaffText(this->score());
+            StaffText* s = new StaffText(this->score());
             s->setTrack(this->track());
             s->initSubStyle(SubStyle::STAFF);
             s->setParent(this->segment());
             s->setPlainText(description);
             s->setPlacement(Placement::BELOW);
+            s->setHmnGenerated(true);
             this->score()->undoAddElement(s);
-            this->_hmnTexts.push_back(s);
          }
 
-      _hmnActive = true;
+      this->undoChangeProperty(P_ID::HMN_ACTIVE, true);
      }
 
 //---------------------------------------------------------

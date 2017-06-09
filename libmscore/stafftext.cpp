@@ -71,6 +71,9 @@ void StaffText::writeProperties(XmlWriter& xml) const
             int swingRatio = swingParameters()->swingRatio;
             xml.tagE(QString("swing unit=\"%1\" ratio= \"%2\"").arg(swingUnit).arg(swingRatio));
             }
+      if (hmnGenerated()) {
+            xml.tag("hmnGenerated", _hmnGenerated);
+            }
       TextBase::writeProperties(xml);
       }
 
@@ -165,7 +168,14 @@ bool StaffText::readProperties(XmlReader& e)
             setSwingParameters(unit, ratio);
             e.readNext();
             }
+<<<<<<< 39ea9e88d657eb053216f8ccfa6e719c1919457b
       else if (!TextBase::readProperties(e))
+=======
+      else if (tag == "hmnGenerated") {
+            setHmnGenerated(e.readInt());
+            }
+      else if (!Text::readProperties(e))
+>>>>>>> Fix removal of HMN note names
             return false;
       return true;
       }

@@ -2826,6 +2826,12 @@ void Score::cmdHamburgMusicNotation()
       {
       qDebug("Toggle hamburg music notation");
       QList<Chord*> chords;
+
+      bool noSelection = !selection().isRange();
+
+      if (noSelection)
+          cmdSelectAll();
+
       // loop through all notes in selection
       foreach (Element* e, selection().elements()) {
             if (e->type() == ElementType::NOTE) {
@@ -2843,17 +2849,17 @@ void Score::cmdHamburgMusicNotation()
                         for (ScoreElement* e : *c->links()) {
                               Chord* lc = static_cast<Chord*>(e);
                               bool hmnActive = lc->hmnActive();
-                              lc->undoChangeProperty(P_ID::HMN_ACTIVE, !hmnActive);
-                              //lc->setHamburgMusicNotation(!lc->hamburgMusicNotation());
+                              lc->toggleHmn(!hmnActive);
                               }
                         }
                   else {
                       bool hmnActive = c->hmnActive();
-                      c->undoChangeProperty(P_ID::HMN_ACTIVE, !hmnActive);
-                        //c->setHamburgMusicNotation(!c->hamburgMusicNotation());
+                      c->toggleHmn(!hmnActive);
                   }
             }
             }
+      if (noSelection)
+            deselectAll();
       }
 
 //---------------------------------------------------------
