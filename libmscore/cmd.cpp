@@ -2852,6 +2852,8 @@ void Score::cmdHamburgMusicNotation()
             }
       if (noSelection)
             deselectAll();
+
+        this->setLayoutAll();
       }
 
 //---------------------------------------------------------
