@@ -69,6 +69,9 @@ void StaffText::writeProperties(XmlWriter& xml) const
             int swingRatio = swingParameters()->swingRatio;
             xml.tagE(QString("swing unit=\"%1\" ratio= \"%2\"").arg(swingUnit).arg(swingRatio));
             }
+      if (hmnGenerated()) {
+            xml.tag("hmnGenerated", _hmnGenerated);
+            }
       Text::writeProperties(xml);
       }
 
@@ -150,6 +153,9 @@ void StaffText::read(XmlReader& e)
                   setSwing(true);
                   setSwingParameters(unit, ratio);
                   e.readNext();
+                  }
+            else if (tag == "hmnGenerated") {
+                  setHmnGenerated(e.readInt());
                   }
             else if (!Text::readProperties(e))
                   e.unknown();

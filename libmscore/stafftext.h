@@ -41,6 +41,7 @@ class StaffText : public Text  {
       bool _setAeolusStops { false };
       int aeolusStops[4]   { 0, 0, 0, 0 };
       bool _swing          { false };
+      bool _hmnGenerated   { false };
 
    protected:
       virtual void writeProperties(XmlWriter& xml) const;
@@ -69,8 +70,10 @@ class StaffText : public Text  {
       bool getAeolusStop(int group, int idx) const;
       void setSetAeolusStops(bool val)                    { _setAeolusStops = val; }
       void setSwing(bool checked)                         { _swing = checked; }
+      void setHmnGenerated(bool hmnGenerated)             { _hmnGenerated = hmnGenerated; }
       bool setAeolusStops() const                         { return _setAeolusStops; }
       bool swing() const                                  { return _swing; }
+      bool hmnGenerated() const                           { return _hmnGenerated; }
       };
 
 }     // namespace Ms
