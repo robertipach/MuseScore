@@ -5028,7 +5028,7 @@ void MuseScore::toggleHamburgMusicNotation()
       {
             if (cs) {
                   cs->startCmd();
-                  cs->cmdHamburgMusicNotation();
+                  cs->cmdHamburgMusicNotation(preferences.hmnShowNotenames);
                   cs->endCmd();
             }
       }

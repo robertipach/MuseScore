@@ -2814,7 +2814,7 @@ void Score::cmdSlashRhythm()
 ///   converts rhythms in selected region to HMN
 //---------------------------------------------------------
 
-void Score::cmdHamburgMusicNotation()
+void Score::cmdHamburgMusicNotation(bool showNotenames)
       {
       qDebug("Toggle hamburg music notation");
       QList<Chord*> chords;
@@ -2841,12 +2841,12 @@ void Score::cmdHamburgMusicNotation()
                         for (ScoreElement* e : *c->links()) {
                               Chord* lc = static_cast<Chord*>(e);
                               bool hmnActive = lc->hmnActive();
-                              lc->toggleHmn(!hmnActive);
+                              lc->toggleHmn(!hmnActive, showNotenames);
                               }
                         }
                   else {
                       bool hmnActive = c->hmnActive();
-                      c->toggleHmn(!hmnActive);
+                      c->toggleHmn(!hmnActive, showNotenames);
                   }
             }
             }

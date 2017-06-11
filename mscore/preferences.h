@@ -182,6 +182,8 @@ struct Preferences {
       QString workspace;
       int exportPdfDpi;
 
+      bool hmnShowNotenames;
+
       bool dirty;
 
       QList<PluginDescription> pluginList;
