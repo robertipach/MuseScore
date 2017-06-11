@@ -4959,6 +4959,8 @@ void MuseScore::cmd(QAction* a, const QString& cmd)
                         switchLayoutMode(LayoutMode::PAGE);
                   }
             }
+      else if (cmd == "hamburg-music-notation")
+            toggleHamburgMusicNotation();
 #ifndef NDEBUG
       else if (cmd == "no-horizontal-stretch") {
             MScore::noHorizontalStretch = a->isChecked();
@@ -5017,6 +5019,18 @@ void MuseScore::cmd(QAction* a, const QString& cmd)
             }
       if (debugger)
             debugger->reloadClicked();
+      }
+
+//---------------------------------------------------------
+//   toggleHamburgMusicNotation
+//---------------------------------------------------------
+void MuseScore::toggleHamburgMusicNotation()
+      {
+            if (cs) {
+                  cs->startCmd();
+                  cs->cmdHamburgMusicNotation();
+                  cs->endCmd();
+            }
       }
 
 //---------------------------------------------------------

@@ -3294,7 +3294,6 @@ void Score::cmd(const QAction* a)
             { "grace32after",               [this]{ cmdAddGrace(NoteType::GRACE32_AFTER, MScore::division / 8); }},
             { "explode",                    [this]{ cmdExplode();                                               }},
             { "implode",                    [this]{ cmdImplode();                                               }},
-            { "hamburg-music-notation",     [this]{ cmdHamburgMusicNotation();                                             }},
             { "slash-fill",                 [this]{ cmdSlashFill();                                             }},
             { "slash-rhythm",               [this]{ cmdSlashRhythm();                                           }},
             { "resequence-rehearsal-marks", [this]{ cmdResequenceRehearsalMarks();                              }},
