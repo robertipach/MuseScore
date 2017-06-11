@@ -93,6 +93,7 @@ void Preferences::init(bool storeInMemoryOnly)
             {PREF_APP_STARTUP_STARTSCORE,                          new StringPreference(":/data/My_First_Score.mscz", false)},
             {PREF_UI_APP_STARTUP_SHOWTOURS,                        new BoolPreference(true)},
             {PREF_APP_WORKSPACE,                                   new StringPreference("Basic", false)},
+            {PREF_APP_HMN_SHOW_NOTENAMES,                          new BoolPreference(false)},
             {PREF_EXPORT_AUDIO_NORMALIZE,                          new BoolPreference(true)},
             {PREF_EXPORT_AUDIO_SAMPLERATE,                         new IntPreference(44100, false)},
             {PREF_EXPORT_MP3_BITRATE,                              new IntPreference(128, false)},

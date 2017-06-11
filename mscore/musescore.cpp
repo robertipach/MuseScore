@@ -6135,7 +6135,7 @@ void MuseScore::toggleHamburgMusicNotation()
       {
             if (cs) {
                   cs->startCmd();
-                  cs->cmdHamburgMusicNotation();
+                  cs->cmdHamburgMusicNotation(preferences.getBool(PREF_APP_HMN_SHOW_NOTENAMES));
                   cs->endCmd();
             }
       }

@@ -149,7 +149,7 @@ class Chord final : public ChordRest {
 
       bool hmnActive() const                 { return _hmnActive; }
       void setHmnActive(bool val)            { _hmnActive = val; }
-      void toggleHmn(bool activate);
+      void toggleHmn(bool activate, bool showNotenames);
 
       virtual void removeMarkings(bool keepTremolo = false) override;
 
