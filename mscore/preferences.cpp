@@ -154,6 +154,8 @@ void Preferences::init()
       pngTransparent           = true;
       language                 = "system";
 
+      hmnShowNotenames        = false;
+
       mag                     = 1.0;
       showMidiControls        = false;
 
@@ -306,6 +308,8 @@ void Preferences::write()
 
       s.setValue("twosided",    MScore::defaultStyle().value(StyleIdx::pageTwosided).toBool());
       s.setValue("spatium",     MScore::defaultStyle().value(StyleIdx::spatium).toDouble() / DPI);
+
+      s.setValue("hmnShowNotenames", hmnShowNotenames);
 
       s.setValue("mag", mag);
       s.setValue("showMidiControls", showMidiControls);
@@ -466,6 +470,8 @@ void Preferences::read()
             musicxmlExportBreaks = MusicxmlExportBreaks::MANUAL;
       else if (br == "no")
             musicxmlExportBreaks = MusicxmlExportBreaks::NO;
+
+      hmnShowNotenames       = s.value("hmnShowNotenames", hmnShowNotenames).toBool();
 
       mag                    = s.value("mag", mag).toDouble();
       showMidiControls       = s.value("showMidiControls", showMidiControls).toBool();
@@ -994,6 +1000,7 @@ void PreferenceDialog::updateValues()
       // score settings
       //
       scale->setValue(prefs.mag * 100.0);
+      showHmnNotenames->setChecked(prefs.hmnShowNotenames);
       showMidiControls->setChecked(prefs.showMidiControls);
 
       defaultPlayDuration->setValue(MScore::defaultPlayDuration);
@@ -1543,6 +1550,8 @@ void PreferenceDialog::apply()
 
       //update
       prefs.checkUpdateStartup = checkUpdateStartup->isChecked();
+
+      prefs.hmnShowNotenames = showHmnNotenames->isChecked();
 
       prefs.mag         = scale->value()/100.0;
       prefs.showMidiControls = showMidiControls->isChecked();
