@@ -3006,15 +3006,17 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
 
             // Remove text
             qDebug("Removing texts");
-            // TODO: First collect elements, then remove!? Could cause bug of texts not being removed
+            std::vector<StaffText*> hmnNotenames;
             for (Element* elem : this->segment()->annotations()) {
                 if (elem != NULL && elem->type() == ElementType::STAFF_TEXT) {
                     StaffText* text = static_cast<StaffText*>(elem);
                     if (text->hmnGenerated()) {
-                        this->score()->undoRemoveElement(text);
+                          hmnNotenames.push_back(text);
                     }
                 }
             }
+            for (StaffText* text : hmnNotenames)
+                  this->score()->undoRemoveElement(text);
 
             if (!this->noStem()) {
                 this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF());
