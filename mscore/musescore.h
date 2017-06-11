@@ -524,6 +524,7 @@ class MuseScore : public QMainWindow, public MuseScoreCore {
       void inputMethodVisibleChanged();
       void endSearch();
       void saveScoreDialogFilterSelected(const QString&);
+      void toggleHamburgMusicNotation();
 #ifdef OSC
       void oscIntMessage(int);
       void oscVolume(int val);
