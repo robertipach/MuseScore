@@ -3284,7 +3284,7 @@ void Chord::setSlash(bool flag, bool stemless)
 //   setHamburgMusicNotation
 //---------------------------------------------------------
 
-void Chord::toggleHmn(bool activate)
+void Chord::toggleHmn(bool activate, bool showNotenames)
       {  
       if (!activate) {
             qDebug("Disable hamburg music notation on chord");
@@ -3297,6 +3297,7 @@ void Chord::toggleHmn(bool activate)
 
             // Remove text
             qDebug("Removing texts");
+            // TODO: First collect elements, then remove!? Could cause bug of texts not being removed
             for (Element* elem : this->segment()->annotations()) {
                 if (elem != NULL && elem->type() == ElementType::STAFF_TEXT) {
                     StaffText* text = static_cast<StaffText*>(elem);
@@ -3318,7 +3319,7 @@ void Chord::toggleHmn(bool activate)
       //undoChangeProperty(P_ID::STEM_DIRECTION, Direction_AUTO);
 
       // voice-dependent attributes - line, size, offset, head
-      qDebug("Enable hamburg music notation on chord");
+      qDebug("Activate hamburg music notation on chord");
       int ns = _notes.size();
       for (int i = ns - 1; i >= 0; --i) {
             Note* n = _notes[i];
@@ -3358,21 +3359,23 @@ void Chord::toggleHmn(bool activate)
             n->undoChangeProperty(P_ID::HEAD_GROUP, static_cast<int>(head));
             n->undoChangeProperty(P_ID::FIXED, true);
             n->undoChangeProperty(P_ID::FIXED_LINE, line);
-            // TODO: Proper stem offset even for multi-note chords
+
             if (!this->noStem() && !this->beam()) {
                 this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
                 this->stem()->undoChangeProperty(P_ID::AUTOPLACE, false);
             }
 
             // Add text
-            StaffText* s = new StaffText(this->score());
-            s->setTrack(this->track());
-            s->initSubStyle(SubStyle::STAFF);
-            s->setParent(this->segment());
-            s->setPlainText(description);
-            s->setPlacement(Placement::BELOW);
-            s->setHmnGenerated(true);
-            this->score()->undoAddElement(s);
+            if (showNotenames) {
+                  StaffText* s = new StaffText(this->score());
+                  s->setTrack(this->track());
+                  s->initSubStyle(SubStyle::STAFF);
+                  s->setParent(this->segment());
+                  s->setPlainText(description);
+                  s->setPlacement(Placement::BELOW);
+                  s->setHmnGenerated(true);
+                  this->score()->undoAddElement(s);
+            }
          }
 
       this->undoChangeProperty(P_ID::HMN_ACTIVE, true);
