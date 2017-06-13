@@ -607,6 +607,7 @@ void Staff::write(XmlWriter& xml) const
       writeProperty(xml, P_ID::PLAYBACK_VOICE2);
       writeProperty(xml, P_ID::PLAYBACK_VOICE3);
       writeProperty(xml, P_ID::PLAYBACK_VOICE4);
+      writeProperty(xml, P_ID::HMN_ACTIVE);
       xml.etag();
       }
 
@@ -715,6 +716,8 @@ bool Staff::readProperties(XmlReader& e)
             setPlaybackVoice(2, e.readInt());
       else if (tag == "playbackVoice4")
             setPlaybackVoice(3, e.readInt());
+      else if (tag == "hmnActive")
+            _hmnActive = e.readBool();
       else
             return false;
       return true;
@@ -1268,6 +1271,8 @@ QVariant Staff::getProperty(P_ID id) const
                   return barLineTo();
             case P_ID::STAFF_USERDIST:
                   return userDist();
+            case P_ID::HMN_ACTIVE:
+                  return hmnActive();
             default:
                   qDebug("unhandled id %s", propertyName(id));
                   return QVariant();
@@ -1317,6 +1322,9 @@ bool Staff::setProperty(P_ID id, const QVariant& v)
             case P_ID::STAFF_USERDIST:
                   setUserDist(v.toReal());
                   break;
+            case P_ID::HMN_ACTIVE:
+                  setHmnActive(v.toBool());
+                  break;
             default:
                   qDebug("unhandled id %s", propertyName(id));
                   break;
@@ -1350,6 +1358,8 @@ QVariant Staff::propertyDefault(P_ID id) const
                   return 0;
             case P_ID::STAFF_USERDIST:
                   return qreal(0.0);
+            case P_ID::HMN_ACTIVE:
+                  return false;
             default:
                   qDebug("unhandled id %s", propertyName(id));
                   return QVariant();
@@ -1437,5 +1447,14 @@ qreal Staff::lineDistance(int tick) const
       return staffType(tick)->lineDistance().val();
       }
 
+//---------------------------------------------------------
+//   setHmnActive
+//---------------------------------------------------------
+
+void Staff::setHmnActive(bool active)
+      {
+            this->staffType(0)->setGenClef(!active);
+            _hmnActive = active;
+      }
 }
 

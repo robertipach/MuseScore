@@ -2656,6 +2656,7 @@ QVariant Chord::propertyDefault(P_ID propertyId) const
             case P_ID::NO_STEM:        return false;
             case P_ID::SMALL:          return false;
             case P_ID::STEM_DIRECTION: return QVariant::fromValue<Direction>(Direction::AUTO);
+            case P_ID::HMN_ACTIVE:     return false;
             default:
                   return ChordRest::propertyDefault(propertyId);
             }
@@ -3313,12 +3314,10 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
                 this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF());
                 this->stem()->undoChangeProperty(P_ID::AUTOPLACE, true);
             }
+
             this->undoChangeProperty(P_ID::HMN_ACTIVE, false);
             return;
         }
-
-      // set stem to auto
-      //undoChangeProperty(P_ID::STEM_DIRECTION, Direction_AUTO);
 
       // voice-dependent attributes - line, size, offset, head
       qDebug("Activate hamburg music notation on chord");

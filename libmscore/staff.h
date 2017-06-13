@@ -99,6 +99,8 @@ class Staff final : public ScoreElement {
       bool _hideSystemBarLine  { false };       // no system barline if not preceeded by staff with barline
       HideMode _hideWhenEmpty  { HideMode::AUTO };    // hide empty staves
 
+      bool _hmnActive          { false };
+
       QColor _color            { MScore::defaultColor };
       qreal _userDist          { 0.0   };       ///< user edited extra distance
 
@@ -183,6 +185,9 @@ class Staff final : public ScoreElement {
       void setCutaway(bool val)      { _cutaway = val;      }
       bool showIfEmpty() const       { return _showIfEmpty; }
       void setShowIfEmpty(bool val)  { _showIfEmpty = val;  }
+
+      bool hmnActive() const         { return _hmnActive;   }
+      void setHmnActive(bool active);
 
       bool hideSystemBarLine() const      { return _hideSystemBarLine; }
       void setHideSystemBarLine(bool val) { _hideSystemBarLine = val;  }

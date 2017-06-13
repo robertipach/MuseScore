@@ -2825,13 +2825,22 @@ void Score::cmdSlashRhythm()
 void Score::cmdHamburgMusicNotation(bool showNotenames)
       {
       qDebug("Toggle hamburg music notation");
-      QList<Chord*> chords;
 
       bool noSelection = !selection().isRange();
-
       if (noSelection)
-          cmdSelectAll();
+            cmdSelectAll();
 
+      if (!selection().startSegment()) // empty score?
+            return;
+
+      int startStaff = selection().staffStart();
+      int endStaff = selection().staffEnd();
+
+      bool activateHmn = !this->staff(startStaff)->hmnActive();
+      for(int staffIdx = startStaff; staffIdx < endStaff; ++staffIdx)
+            this->staff(staffIdx)->undoChangeProperty(P_ID::HMN_ACTIVE, activateHmn);
+
+      QList<Chord*> chords;
       // loop through all notes in selection
       foreach (Element* e, selection().elements()) {
             if (e->type() == ElementType::NOTE) {
@@ -2844,24 +2853,23 @@ void Score::cmdHamburgMusicNotation(bool showNotenames)
                   if (chords.contains(c))
                         continue;
                   chords.append(c);
+
                   // toggle HMN setting
                   if (c->links()) {
                         for (ScoreElement* e : *c->links()) {
                               Chord* lc = static_cast<Chord*>(e);
-                              bool hmnActive = lc->hmnActive();
-                              lc->toggleHmn(!hmnActive, showNotenames);
+                              lc->toggleHmn(activateHmn, showNotenames);
                               }
                         }
-                  else {
-                      bool hmnActive = c->hmnActive();
-                      c->toggleHmn(!hmnActive, showNotenames);
+                  else
+                        c->toggleHmn(activateHmn, showNotenames);
                   }
             }
-            }
+
       if (noSelection)
             deselectAll();
 
-        this->setLayoutAll();
+      this->setLayoutAll();
       }
 
 //---------------------------------------------------------
