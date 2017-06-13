@@ -2555,6 +2555,8 @@ QVariant Chord::propertyDefault(Pid propertyId) const
             case Pid::NO_STEM:        return false;
             case Pid::SMALL:          return false;
             case Pid::STEM_DIRECTION: return QVariant::fromValue<Direction>(Direction::AUTO);
+            case Pid::HMN_ACTIVE:     return false;
+
             default:
                   return ChordRest::propertyDefault(propertyId);
             }
@@ -2576,7 +2578,7 @@ bool Chord::setProperty(Pid propertyId, const QVariant& v)
             case Pid::STEM_DIRECTION:
                   setStemDirection(v.value<Direction>());
                   break;
-            case P_ID::HMN_ACTIVE:
+            case Pid::HMN_ACTIVE:
                   setHmnActive(v.toBool());
                   break;
             default:
@@ -2713,9 +2715,9 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
             qDebug("Disable hamburg music notation on chord");
             // restore to normal
             for (Note* n : _notes) {
-                  n->undoChangeProperty(P_ID::HEAD_GROUP, int(NoteHead::Group::HEAD_NORMAL));
-                  n->undoChangeProperty(P_ID::FIXED, false);
-                  n->undoChangeProperty(P_ID::FIXED_LINE, 0);
+                  n->undoChangeProperty(Pid::HEAD_GROUP, int(NoteHead::Group::HEAD_NORMAL));
+                  n->undoChangeProperty(Pid::FIXED, false);
+                  n->undoChangeProperty(Pid::FIXED_LINE, 0);
             }
 
             // Remove text
@@ -2733,15 +2735,13 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
                   this->score()->undoRemoveElement(text);
 
             if (!this->noStem()) {
-                this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF());
-                this->stem()->undoChangeProperty(P_ID::AUTOPLACE, true);
+                this->stem()->undoChangeProperty(Pid::OFFSET, QPointF());
+                this->stem()->undoChangeProperty(Pid::AUTOPLACE, true);
             }
-            this->undoChangeProperty(P_ID::HMN_ACTIVE, false);
+
+            this->undoChangeProperty(Pid::HMN_ACTIVE, false);
             return;
         }
-
-      // set stem to auto
-      //undoChangeProperty(P_ID::STEM_DIRECTION, Direction_AUTO);
 
       // voice-dependent attributes - line, size, offset, head
       qDebug("Activate hamburg music notation on chord");
@@ -2781,20 +2781,19 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
 
             qDebug("Setting fixed line to %d", line);
             qreal stemOffsetY = (qreal)(line - n->line());
-            n->undoChangeProperty(P_ID::HEAD_GROUP, static_cast<int>(head));
-            n->undoChangeProperty(P_ID::FIXED, true);
-            n->undoChangeProperty(P_ID::FIXED_LINE, line);
+            n->undoChangeProperty(Pid::HEAD_GROUP, static_cast<int>(head));
+            n->undoChangeProperty(Pid::FIXED, true);
+            n->undoChangeProperty(Pid::FIXED_LINE, line);
 
             if (!this->noStem() && !this->beam()) {
-                this->stem()->undoChangeProperty(P_ID::USER_OFF, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
-                this->stem()->undoChangeProperty(P_ID::AUTOPLACE, false);
+                this->stem()->undoChangeProperty(Pid::OFFSET, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
+                this->stem()->undoChangeProperty(Pid::AUTOPLACE, false);
             }
 
             // Add text
             if (showNotenames) {
                   StaffText* s = new StaffText(this->score());
                   s->setTrack(this->track());
-                  s->initSubStyle(SubStyle::STAFF);
                   s->setParent(this->segment());
                   s->setPlainText(description);
                   s->setPlacement(Placement::BELOW);
@@ -2803,7 +2802,7 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
             }
          }
 
-      this->undoChangeProperty(P_ID::HMN_ACTIVE, true);
+      this->undoChangeProperty(Pid::HMN_ACTIVE, true);
      }
 
 //---------------------------------------------------------
