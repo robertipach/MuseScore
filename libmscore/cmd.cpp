@@ -2845,8 +2845,9 @@ void Score::cmdHamburgMusicNotation(bool showNotenames)
       foreach (Element* e, selection().elements()) {
             if (e->type() == ElementType::NOTE) {
                   Note* n = toNote(e);
-                  if (n->noteType() != NoteType::NORMAL)
+                  if (n->noteType() == NoteType::INVALID)
                         continue;
+
                   Chord* c = n->chord();
 
                   // check for duplicates (chords with multiple notes)
