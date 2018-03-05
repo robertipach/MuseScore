@@ -168,14 +168,10 @@ bool StaffText::readProperties(XmlReader& e)
             setSwingParameters(unit, ratio);
             e.readNext();
             }
-<<<<<<< 39ea9e88d657eb053216f8ccfa6e719c1919457b
-      else if (!TextBase::readProperties(e))
-=======
       else if (tag == "hmnGenerated") {
             setHmnGenerated(e.readInt());
             }
-      else if (!Text::readProperties(e))
->>>>>>> Fix removal of HMN note names
+      else if (!TextBase::readProperties(e))
             return false;
       return true;
       }
