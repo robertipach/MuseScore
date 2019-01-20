@@ -1312,7 +1312,7 @@ bool Staff::setProperty(Pid id, const QVariant& v)
             case Pid::STAFF_USERDIST:
                   setUserDist(v.toReal());
                   break;
-            case P_ID::HMN_ACTIVE:
+            case Pid::HMN_ACTIVE:
                   setHmnActive(v.toBool());
                   break;
             default:
@@ -1348,7 +1348,7 @@ QVariant Staff::propertyDefault(Pid id) const
                   return 0;
             case Pid::STAFF_USERDIST:
                   return qreal(0.0);
-            case P_ID::HMN_ACTIVE:
+            case Pid::HMN_ACTIVE:
                   return false;
             default:
                   qDebug("unhandled id <%s>", propertyName(id));

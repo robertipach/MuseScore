@@ -2539,7 +2539,7 @@ QVariant Chord::getProperty(Pid propertyId) const
             case Pid::NO_STEM:        return noStem();
             case Pid::SMALL:          return small();
             case Pid::STEM_DIRECTION: return QVariant::fromValue<Direction>(stemDirection());
-			case Pid::HMN_ACTIVE:    return hmnActive();
+		case Pid::HMN_ACTIVE:    return hmnActive();
             default:
                   return ChordRest::getProperty(propertyId);
             }

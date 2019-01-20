@@ -2894,7 +2894,7 @@ void Score::cmdHamburgMusicNotation(bool showNotenames)
 
       bool activateHmn = !this->staff(startStaff)->hmnActive();
       for(int staffIdx = startStaff; staffIdx < endStaff; ++staffIdx)
-            this->staff(staffIdx)->undoChangeProperty(P_ID::HMN_ACTIVE, activateHmn);
+            this->staff(staffIdx)->undoChangeProperty(Pid::HMN_ACTIVE, activateHmn);
 
       QList<Chord*> chords;
       // loop through all notes in selection
