@@ -2734,9 +2734,9 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
             for (StaffText* text : hmnNotenames)
                   this->score()->undoRemoveElement(text);
 
-            if (!this->noStem()) {
-                this->stem()->undoChangeProperty(Pid::OFFSET, QPointF());
-                this->stem()->undoChangeProperty(Pid::AUTOPLACE, true);
+            if (!this->noStem() && this->stem() && !this->beam()) {
+                //this->stem()->undoChangeProperty(Pid::OFFSET, QPointF());
+                //this->stem()->undoChangeProperty(Pid::AUTOPLACE, true);
             }
 
             this->undoChangeProperty(Pid::HMN_ACTIVE, false);
@@ -2747,7 +2747,7 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
       qDebug("Activate hamburg music notation on chord");
       int ns = _notes.size();
       for (int i = ns - 1; i >= 0; --i) {
-            Note* n = _notes[i];
+            Note* n = _notes.at(i);
             NoteHead::Group head = NoteHead::Group::HEAD_NORMAL;
             int line = n->line();
             QString description;
@@ -2792,9 +2792,9 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
             n->undoChangeProperty(Pid::FIXED, true);
             n->undoChangeProperty(Pid::FIXED_LINE, line);
 
-            if (!this->noStem() && !this->beam()) {
-                this->stem()->undoChangeProperty(Pid::OFFSET, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
-                this->stem()->undoChangeProperty(Pid::AUTOPLACE, false);
+            if (!this->noStem() && this->stem() && !this->beam()) {
+                //this->stem()->undoChangeProperty(Pid::OFFSET, QPointF(0, stemOffsetY * 0.5 * this->spatium()));
+                //this->stem()->undoChangeProperty(Pid::AUTOPLACE, false);
             }
 
             // Add text
