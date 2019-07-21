@@ -503,6 +503,7 @@ void PreferenceDialog::updateValues(bool useDefaultValues)
       //
       scale->setValue(preferences.getDouble(PREF_SCORE_MAGNIFICATION) * 100.0);
       showMidiControls->setChecked(preferences.getBool(PREF_IO_MIDI_SHOWCONTROLSINMIXER));
+      showHmnNotenames->setChecked(preferences.getBool(PREF_APP_HMN_SHOW_NOTENAMES));
 
       defaultPlayDuration->setValue(preferences.getInt(PREF_SCORE_NOTE_DEFAULTPLAYDURATION));
 
@@ -1092,6 +1093,7 @@ void PreferenceDialog::apply()
             emit mixerPreferencesChanged(preferences.getBool(PREF_IO_MIDI_SHOWCONTROLSINMIXER));
             }
 
+      preferences.setPreference(PREF_APP_HMN_SHOW_NOTENAMES, showHmnNotenames->isChecked());
 
       if (useImportStyleFile->isChecked())
             preferences.setPreference(PREF_IMPORT_STYLE_STYLEFILE, importStyleFile->text());

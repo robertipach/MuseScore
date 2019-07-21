@@ -63,6 +63,8 @@ class Chord final : public ChordRest {
       Arpeggio*           _arpeggio;
       Tremolo*            _tremolo;
       bool                _endsGlissando;///< true if this chord is the ending point of a glissando (needed for layout)
+      bool                _hmnActive;    ///< true if the HMN display is active
+
       QVector<Chord*>     _graceNotes;
       int                 _graceIndex;   ///< if this is a grace note, index in parent list
 
@@ -140,6 +142,11 @@ class Chord final : public ChordRest {
       StemSlash* stemSlash() const           { return _stemSlash; }
       bool slash();
       void setSlash(bool flag, bool stemless);
+
+      bool hmnActive() const                 { return _hmnActive; }
+      void setHmnActive(bool val)            { _hmnActive = val; }
+      void toggleHmn(bool activate, bool showNotenames);
+
       virtual void removeMarkings(bool keepTremolo = false) override;
 
       const QVector<Chord*>& graceNotes() const { return _graceNotes; }

@@ -40,6 +40,7 @@ class StaffTextBase : public TextBase  {
       int aeolusStops[4]   { 0, 0, 0, 0 };
       bool _swing          { false };
       int _capo            { 0 };
+	  bool _hmnGenerated   { false };
 
    public:
       StaffTextBase(Score*, Tid tid, ElementFlags = ElementFlag::NOTHING);
@@ -61,6 +62,8 @@ class StaffTextBase : public TextBase  {
       void setSetAeolusStops(bool val)                    { _setAeolusStops = val; }
       void setSwing(bool checked)                         { _swing = checked; }
       void setCapo(int fretId)                            { _capo = fretId; }
+	  void setHmnGenerated(bool hmnGenerated)             { _hmnGenerated = hmnGenerated; }
+	  bool hmnGenerated() const                           { return _hmnGenerated; }
       bool setAeolusStops() const                         { return _setAeolusStops; }
       bool swing() const                                  { return _swing; }
       int capo() const                                    { return _capo; }

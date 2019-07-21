@@ -2950,6 +2950,62 @@ void Score::cmdSlashRhythm()
       }
 
 //---------------------------------------------------------
+//   cmdHamburgMusicNotation
+///   converts rhythms in selected region to HMN
+//---------------------------------------------------------
+
+void Score::cmdHamburgMusicNotation(bool showNotenames)
+      {
+      qDebug("Toggle hamburg music notation");
+
+      bool noSelection = !selection().isRange();
+      if (noSelection)
+            cmdSelectAll();
+
+      if (!selection().startSegment()) // empty score?
+            return;
+
+      int startStaff = selection().staffStart();
+      int endStaff = selection().staffEnd();
+
+      bool activateHmn = !this->staff(startStaff)->hmnActive();
+      for(int staffIdx = startStaff; staffIdx < endStaff; ++staffIdx)
+            this->staff(staffIdx)->undoChangeProperty(Pid::HMN_ACTIVE, activateHmn);
+
+      QList<Chord*> chords;
+      // loop through all notes in selection
+      foreach (Element* e, selection().elements()) {
+            if (e->type() == ElementType::NOTE) {
+                  Note* n = toNote(e);
+                  if (n->noteType() == NoteType::INVALID)
+                        continue;
+
+                  Chord* c = n->chord();
+
+                  // check for duplicates (chords with multiple notes)
+                  if (chords.contains(c))
+                        continue;
+                  chords.append(c);
+
+                  // toggle HMN setting
+                  if (c->links()) {
+                        for (ScoreElement* e : *c->links()) {
+                              Chord* lc = static_cast<Chord*>(e);
+                              lc->toggleHmn(activateHmn, showNotenames);
+                              }
+                        }
+                  else
+                        c->toggleHmn(activateHmn, showNotenames);
+                  }
+            }
+
+      if (noSelection)
+            deselectAll();
+
+      this->setLayoutAll();
+      }
+
+//---------------------------------------------------------
 //   cmdResequenceRehearsalMarks
 ///   resequences rehearsal marks within a range selection
 ///   or, if nothing is selected, the entire score

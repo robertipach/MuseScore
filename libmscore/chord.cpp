@@ -48,6 +48,7 @@
 #include "beam.h"
 #include "slur.h"
 #include "fingering.h"
+#include "stafftext.h"
 
 namespace Ms {
 
@@ -213,6 +214,7 @@ Chord::Chord(Score* s)
       _stemDirection    = Direction::AUTO;
       _arpeggio         = 0;
       _tremolo          = 0;
+      _hmnActive        = false;
       _endsGlissando    = false;
       _noteType         = NoteType::NORMAL;
       _stemSlash        = 0;
@@ -251,6 +253,7 @@ Chord::Chord(const Chord& c, bool link)
       _arpeggio      = 0;
       _stemSlash     = 0;
       _tremolo       = 0;
+      _hmnActive     = false;
 
       _graceIndex     = c._graceIndex;
       _noStem         = c._noStem;
@@ -992,6 +995,8 @@ void Chord::write(XmlWriter& xml) const
                   break;
             }
 
+      if (_hmnActive)
+            xml.tag("hmnActive", _hmnActive);
       if (_noStem)
             xml.tag("noStem", _noStem);
       else if (_stem && (_stem->isUserModified() || (_stem->userLen() != 0.0)))
@@ -1093,6 +1098,8 @@ bool Chord::readProperties(XmlReader& e)
             }
       else if (readProperty(tag, e, Pid::STEM_DIRECTION))
             ;
+      else if (tag == "hmnActive")
+            _hmnActive = e.readInt();
       else if (tag == "noStem")
             _noStem = e.readInt();
       else if (tag == "Arpeggio") {
@@ -2671,6 +2678,7 @@ QVariant Chord::getProperty(Pid propertyId) const
             case Pid::NO_STEM:        return noStem();
             case Pid::SMALL:          return small();
             case Pid::STEM_DIRECTION: return QVariant::fromValue<Direction>(stemDirection());
+		case Pid::HMN_ACTIVE:    return hmnActive();
             default:
                   return ChordRest::getProperty(propertyId);
             }
@@ -2686,6 +2694,8 @@ QVariant Chord::propertyDefault(Pid propertyId) const
             case Pid::NO_STEM:        return false;
             case Pid::SMALL:          return false;
             case Pid::STEM_DIRECTION: return QVariant::fromValue<Direction>(Direction::AUTO);
+            case Pid::HMN_ACTIVE:     return false;
+
             default:
                   return ChordRest::propertyDefault(propertyId);
             }
@@ -2706,6 +2716,9 @@ bool Chord::setProperty(Pid propertyId, const QVariant& v)
                   break;
             case Pid::STEM_DIRECTION:
                   setStemDirection(v.value<Direction>());
+                  break;
+            case Pid::HMN_ACTIVE:
+                  setHmnActive(v.toBool());
                   break;
             default:
                   return ChordRest::setProperty(propertyId, v);
@@ -2830,6 +2843,108 @@ void Chord::setSlash(bool flag, bool stemless)
                   n->undoChangeProperty(Pid::VISIBLE, false);
             }
       }
+
+//---------------------------------------------------------
+//   setHamburgMusicNotation
+//---------------------------------------------------------
+
+void Chord::toggleHmn(bool activate, bool showNotenames)
+      {  
+      if (!activate) {
+            qDebug("Disable hamburg music notation on chord");
+            // restore to normal
+            for (Note* n : _notes) {
+                  n->undoChangeProperty(Pid::HEAD_GROUP, int(NoteHead::Group::HEAD_NORMAL));
+                  n->undoChangeProperty(Pid::FIXED, false);
+                  n->undoChangeProperty(Pid::FIXED_LINE, 0);
+            }
+
+            // Remove text
+            qDebug("Removing texts");
+
+            std::vector<StaffText*> hmnNotenames;
+
+            for (Element* elem : this->segment()->annotations()) {
+                if (elem != NULL && elem->type() == ElementType::STAFF_TEXT) {
+                    StaffText* text = static_cast<StaffText*>(elem);
+                    if (text->hmnGenerated()) {
+                          hmnNotenames.push_back(text);
+                    }
+                }
+            }
+            for (StaffText* text : hmnNotenames)
+                  this->score()->undoRemoveElement(text);
+
+            this->undoChangeProperty(Pid::HMN_ACTIVE, false);
+
+            return;
+        }
+
+      // voice-dependent attributes - line, size, offset, head
+      qDebug("Activate hamburg music notation on chord");
+      int ns = _notes.size();
+      for (int i = ns - 1; i >= 0; --i) {
+            Note* n = _notes.at(i);
+            NoteHead::Group head = NoteHead::Group::HEAD_NORMAL;
+            int line = n->line();
+            QString description;
+            qDebug("Note pitch: %d", n->pitch());
+
+            // Determine type of note
+            int pitchGroup = n->pitch() % 12;
+            switch(pitchGroup) {
+                case 0: { description = "1"; line = 8; head = NoteHead::Group::HEAD_NORMAL; } break;
+                case 1: { description = "2"; line = 8; head = NoteHead::Group::HEAD_CROSS; } break;
+                case 2: { description = "3"; line = 7; head = NoteHead::Group::HEAD_NORMAL; } break;
+                case 3: { description = "4"; line = 6; head = NoteHead::Group::HEAD_CROSS; } break;
+                case 4: { description = "5"; line = 6; head = NoteHead::Group::HEAD_NORMAL; } break;
+                case 5: { description = "6"; line = 5; head = NoteHead::Group::HEAD_NORMAL; } break;
+                case 6: { description = "7"; line = 4; head = NoteHead::Group::HEAD_CROSS; } break;
+                case 7: { description = "8"; line = 4; head = NoteHead::Group::HEAD_NORMAL; } break;
+                case 8: { description = "9"; line = 3; head = NoteHead::Group::HEAD_CROSS; } break;
+                case 9: { description = "A"; line = 2; head = NoteHead::Group::HEAD_NORMAL; } break;
+                case 10: { description = "B"; line = 2; head = NoteHead::Group::HEAD_CROSS; } break;
+                case 11: { description = "0"; line = 1; head = NoteHead::Group::HEAD_NORMAL; } break;
+            }
+
+            // Use circled cross for notes longer than half
+            if (this->durationType() >= TDuration::DurationType::V_HALF
+                && head == NoteHead::Group::HEAD_CROSS) {
+               head = NoteHead::Group::HEAD_XCIRCLE;
+            }
+
+            // Adjust line for Octave height (C4 displayed on line 8 i.e. bottom line)
+            int pitchOctave = n->pitch() / 12;
+            line = line + (5 - pitchOctave) * 8;
+            // Adjust line for Clef Type: Notes in bass clef displayed one octave
+            // higher
+            // TODO: Add Octave designator before staff, remove clef
+            if (this->staff()->clef(this->tick()) == ClefType::F) {
+               line = line - 8;
+            }
+
+            qDebug("Setting fixed line to %d", line);
+            qreal stemOffsetY = (qreal)(line - n->line());
+
+            n->undoChangeProperty(Pid::HEAD_GROUP, static_cast<int>(head));
+            n->undoChangeProperty(Pid::FIXED, true);
+            n->undoChangeProperty(Pid::FIXED_LINE, line);
+
+            // Add text
+            if (showNotenames) {
+                StaffText* s = new StaffText(this->score());
+                s->setTrack(this->track());
+                //s->initSubStyle(SubStyle::STAFF);
+                s->setParent(this->segment());
+                s->setPlainText(description);
+                s->setPlacement(Placement::BELOW);
+                s->setHmnGenerated(true);
+                this->score()->undoAddElement(s);
+            }
+         }
+
+      this->undoChangeProperty(Pid::HMN_ACTIVE, true);
+     }
 
 //---------------------------------------------------------
 //  updateEndsGlissando

@@ -63,6 +63,9 @@ void StaffTextBase::write(XmlWriter& xml) const
             int swingRatio = swingParameters()->swingRatio;
             xml.tagE(QString("swing unit=\"%1\" ratio= \"%2\"").arg(swingUnit).arg(swingRatio));
             }
+	  if (hmnGenerated()) {
+		    xml.tag("hmnGenerated", _hmnGenerated);
+	        }
       if (capo() != 0)
             xml.tagE(QString("capo fretId=\"%1\"").arg(capo()));
       TextBase::writeProperties(xml);
@@ -153,6 +156,9 @@ bool StaffTextBase::readProperties(XmlReader& e)
             setCapo(fretId);
             e.readNext();
             }
+	  else if (tag == "hmnGenerated") {
+	        setHmnGenerated(e.readInt());
+		    }
       else if (!TextBase::readProperties(e))
             return false;
       return true;
