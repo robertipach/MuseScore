@@ -336,6 +336,7 @@ static constexpr PropertyMetaData propertyList[] = {
       { Pid::START_WITH_MEASURE_ONE,  true,  "startWithMeasureOne",   P_TYPE::BOOL,                DUMMY_QT_TRANSLATE_NOOP("propertyName", "start with measure one") },
 
       { Pid::PATH,                    false, "path",                  P_TYPE::PATH,                DUMMY_QT_TRANSLATE_NOOP("propertyName", "path") },
+      { Pid::HMN_ACTIVE,              false, "hmnActive",             P_TYPE::BOOL,                DUMMY_QT_TRANSLATE_NOOP("propertyName", "hamburg music notation active") },
 
       { Pid::END, false, "++end++", P_TYPE::INT, DUMMY_QT_TRANSLATE_NOOP("propertyName", "<invalid property>") }
       };

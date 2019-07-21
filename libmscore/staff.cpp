@@ -677,6 +677,7 @@ void Staff::write(XmlWriter& xml) const
       writeProperty(xml, Pid::PLAYBACK_VOICE2);
       writeProperty(xml, Pid::PLAYBACK_VOICE3);
       writeProperty(xml, Pid::PLAYBACK_VOICE4);
+      writeProperty(xml, Pid::HMN_ACTIVE);
       xml.etag();
       }
 
@@ -783,6 +784,8 @@ bool Staff::readProperties(XmlReader& e)
             setPlaybackVoice(2, e.readInt());
       else if (tag == "playbackVoice4")
             setPlaybackVoice(3, e.readInt());
+      else if (tag == "hmnActive")
+            _hmnActive = e.readBool();
       else
             return false;
       return true;
@@ -1301,6 +1304,8 @@ QVariant Staff::getProperty(Pid id) const
                   return userDist();
             case Pid::GENERATED:
                   return false;
+            case Pid::HMN_ACTIVE:
+                  return hmnActive();
             default:
                   qDebug("unhandled id <%s>", propertyName(id));
                   return QVariant();
@@ -1371,6 +1376,9 @@ bool Staff::setProperty(Pid id, const QVariant& v)
             case Pid::STAFF_USERDIST:
                   setUserDist(v.toReal());
                   break;
+            case Pid::HMN_ACTIVE:
+                  setHmnActive(v.toBool());
+                  break;
             default:
                   qDebug("unhandled id <%s>", propertyName(id));
                   break;
@@ -1404,6 +1412,8 @@ QVariant Staff::propertyDefault(Pid id) const
                   return 0;
             case Pid::STAFF_USERDIST:
                   return qreal(0.0);
+            case Pid::HMN_ACTIVE:
+                  return false;
             default:
                   qDebug("unhandled id <%s>", propertyName(id));
                   return QVariant();
@@ -1500,5 +1510,14 @@ qreal Staff::lineDistance(const Fraction& tick) const
       return staffType(tick)->lineDistance().val();
       }
 
+//---------------------------------------------------------
+//   setHmnActive
+//---------------------------------------------------------
+
+void Staff::setHmnActive(bool active)
+      {
+            this->staffType(Fraction::fromTicks(0))->setGenClef(!active);
+            _hmnActive = active;
+      }
 }
 

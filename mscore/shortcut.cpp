@@ -3564,6 +3564,16 @@ Shortcut Shortcut::_sc[] = {
       {
          MsWidget::SCORE_TAB,
          STATE_NORMAL,
+         "hamburg-music-notation",
+         QT_TRANSLATE_NOOP("action","Toggle Hamburg Music Notation"),
+         QT_TRANSLATE_NOOP("action","Toggle hamburg music notation"),
+         0,
+         Icons::Invalid_ICON,
+         Qt::WindowShortcut
+         },
+      {
+         MsWidget::SCORE_TAB,
+         STATE_NORMAL,
          "implode",
          QT_TRANSLATE_NOOP("action","Implode"),
          QT_TRANSLATE_NOOP("action","Implode"),
