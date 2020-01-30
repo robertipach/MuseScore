@@ -2873,7 +2873,7 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
             std::vector<StaffText*> hmnNotenames;
 
             for (Element* elem : this->segment()->annotations()) {
-                if (elem != NULL && elem->type() == ElementType::STAFF_TEXT) {
+                if (elem != NULL && elem->isStaffText()) {
                     StaffText* text = static_cast<StaffText*>(elem);
                     if (text->hmnGenerated()) {
                           hmnNotenames.push_back(text);
@@ -2888,7 +2888,6 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
             return;
         }
 
-      // voice-dependent attributes - line, size, offset, head
       qDebug("Activate hamburg music notation on chord");
       int ns = _notes.size();
       for (int i = ns - 1; i >= 0; --i) {
@@ -2926,7 +2925,6 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
             line = line + (5 - pitchOctave) * 8;
             // Adjust line for Clef Type: Notes in bass clef displayed one octave
             // higher
-            // TODO: Add Octave designator before staff, remove clef
             if (this->staff()->clef(this->tick()) == ClefType::F) {
                line = line - 8;
             }
@@ -2942,7 +2940,6 @@ void Chord::toggleHmn(bool activate, bool showNotenames)
             if (showNotenames) {
                 StaffText* s = new StaffText(this->score());
                 s->setTrack(this->track());
-                //s->initSubStyle(SubStyle::STAFF);
                 s->setParent(this->segment());
                 s->setPlainText(description);
                 s->setPlacement(Placement::BELOW);
