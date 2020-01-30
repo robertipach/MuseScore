@@ -1368,5 +1368,24 @@ class MoveTremolo : public UndoCommand {
       UNDO_NAME("MoveTremolo")
       };
 
+
+//---------------------------------------------------------
+//   Toggle Hamburg Music Notation
+//---------------------------------------------------------
+
+class ToggleHmn : public UndoCommand {
+      Score* score;
+      bool activate;
+
+      void undo(EditData*) override;
+      void redo(EditData*) override;
+
+public:
+      ToggleHmn(Score* s, bool a) : score(s), activate(a) {}
+      UNDO_NAME("ToggleHmn")
+      };
+
+
 }     // namespace Ms
+
 #endif

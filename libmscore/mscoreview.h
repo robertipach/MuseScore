@@ -60,6 +60,8 @@ class MuseScoreView {
       virtual void cmdAddSlur(ChordRest*, ChordRest*, const Slur* /* slurTemplate */) {};
       virtual void startEdit(Element*, Grip /*startGrip*/) {};
       virtual void startNoteEntryMode() {};
+      virtual void disableNoteEditMode() {};
+      virtual void enableNoteEditMode() {};
       virtual void drawBackground(QPainter*, const QRectF&) const = 0;
       virtual void setDropTarget(const Element*) {}
 

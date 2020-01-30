@@ -185,6 +185,7 @@ class MuseScore : public QMainWindow, public MuseScoreCore {
       ScoreTab* ctab                       { 0 };
       QMap<MasterScore*, bool> scoreWasShown; // whether each score in scoreList has ever been shown
       ScoreState _sstate;
+      ScoreState _sstateNormalSaved;
       UpdateChecker* ucheck;
       ExtensionsUpdateChecker* packUChecker = nullptr;
 

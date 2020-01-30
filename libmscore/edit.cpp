@@ -3915,6 +3915,11 @@ void Score::undoChangeClef(Staff* ostaff, Element* e, ClefType ct)
             }
       }
 
+void Score::undoToggleHmn(bool activate)
+      {
+            undo(new ToggleHmn(this, activate));
+      }
+
 //---------------------------------------------------------
 //   findLinkedVoiceElement
 //---------------------------------------------------------

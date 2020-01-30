@@ -192,9 +192,13 @@ bool Score::read(XmlReader& e)
                   else
                         qDebug("layoutMode: %s", qPrintable(s));
                   }
+            else if (tag == "hmnActive") {
+                        _hmnActive = e.readBool();
+                  }
             else
                   e.unknown();
             }
+
       e.reconnectBrokenConnectors();
       if (e.error() != QXmlStreamReader::NoError) {
             qDebug("%s: xml read error at line %lld col %lld: %s",

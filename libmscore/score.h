@@ -463,6 +463,7 @@ class Score : public QObject, public ScoreElement {
                                                 ///< saves will not overwrite the backup file.
       bool _defaultsRead        { false };      ///< defaults were read at MusicXML import, allow export of defaults in convertermode
       bool _isPalette           { false };
+      bool _hmnActive           { false };      ///< True if hamburg music notation is active
 
       int _mscVersion { MSCVERSION };   ///< version of current loading *.msc file
 
@@ -1156,7 +1157,10 @@ class Score : public QObject, public ScoreElement {
       void cmdExplode();
       void cmdImplode();
       void cmdSlashFill();
-      void cmdHamburgMusicNotation(bool showNotenames);
+      bool cmdHamburgMusicNotation(bool showNotenames);
+      void undoToggleHmn(bool activate);
+      bool isHmnActive()                  { return _hmnActive; }
+      void setHmnActive(bool active)      { _hmnActive = active;  }
       void cmdSlashRhythm();
       void cmdResequenceRehearsalMarks();
       void cmdExchangeVoice(int, int);

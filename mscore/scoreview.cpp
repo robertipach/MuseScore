@@ -238,6 +238,10 @@ void ScoreView::setScore(Score* s)
 
             connect(s, SIGNAL(posChanged(POS,unsigned)), SLOT(posChanged(POS,unsigned)));
             connect(this, SIGNAL(viewRectChanged()), this, SLOT(updateContinuousPanel()));
+
+            if (_score->isHmnActive()) {
+                changeState(ViewState::DISABLE_NOTE_EDIT);
+                }
             }
       }
 
@@ -3431,6 +3435,8 @@ ScoreState ScoreView::mscoreState() const
             }
       if (state == ViewState::PLAY)
             return STATE_PLAY;
+      if (state == ViewState::DISABLE_NOTE_EDIT)
+            return STATE_NORMAL_NO_ENTRY;
       return STATE_NORMAL;
       }
 
@@ -4800,6 +4806,24 @@ void ScoreView::startNoteEntryMode()
       {
       changeState(ViewState::NOTE_ENTRY);
       }
+
+//---------------------------------------------------------
+//   disableNoteEditMode
+//---------------------------------------------------------
+
+void ScoreView::disableNoteEditMode()
+{
+    changeState(ViewState::DISABLE_NOTE_EDIT);
+}
+
+//---------------------------------------------------------
+//   enableNoteEditMode
+//---------------------------------------------------------
+
+void ScoreView::enableNoteEditMode()
+{
+    changeState(ViewState::NORMAL);
+}
 
 //---------------------------------------------------------
 //   fotoMode

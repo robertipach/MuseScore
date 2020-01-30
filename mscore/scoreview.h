@@ -81,6 +81,8 @@ enum class ViewState {
       FOTO_DRAG_EDIT,
       FOTO_DRAG_OBJECT,
       FOTO_LASSO,
+
+      DISABLE_NOTE_EDIT,
       };
 
 //---------------------------------------------------------
@@ -254,6 +256,8 @@ class ScoreView : public QWidget, public MuseScoreView {
 
       void startNoteEntry();
       virtual void startNoteEntryMode() override;
+      virtual void disableNoteEditMode() override;
+      virtual void enableNoteEditMode() override;
       void endNoteEntry();
 
       void endLasso();

@@ -3100,7 +3100,7 @@ void Score::cmdSlashRhythm()
 ///   converts rhythms in selected region to HMN
 //---------------------------------------------------------
 
-void Score::cmdHamburgMusicNotation(bool showNotenames)
+bool Score::cmdHamburgMusicNotation(bool showNotenames)
       {
       qDebug("Toggle hamburg music notation");
 
@@ -3109,37 +3109,41 @@ void Score::cmdHamburgMusicNotation(bool showNotenames)
             cmdSelectAll();
 
       if (!selection().startSegment()) // empty score?
-            return;
+            return false;
 
       int startStaff = selection().staffStart();
       int endStaff = selection().staffEnd();
 
       bool activateHmn = !this->staff(startStaff)->hmnActive();
+
+      this->undoChangeProperty(Pid::HMN_ACTIVE, activateHmn);
       for(int staffIdx = startStaff; staffIdx < endStaff; ++staffIdx)
             this->staff(staffIdx)->undoChangeProperty(Pid::HMN_ACTIVE, activateHmn);
 
       // add octave designator
-      Segment* firstSegment = selection().firstChordRestSegment();
-      for (int staffIdx = startStaff; staffIdx < endStaff; ++staffIdx) {
-          Element* firstElem = firstSegment->firstElement(staffIdx);
-          ChordRest* lc = static_cast<ChordRest*>(firstElem);
-          StaffText* s = new StaffText(this->score());
-          s->setTrack(lc->track());
-          s->setParent(firstSegment);
-          if (lc->staff()->clef(lc->tick()) == ClefType::F) {
-              s->setPlainText("C3");
-          }
-          else {
-              s->setPlainText("C4");
-          }
-          s->setPlacement(Placement::ABOVE);
-          s->setHmnGenerated(true);
-          this->score()->undoAddElement(s);
+      if (activateHmn) {
+            Segment* firstSegment = selection().firstChordRestSegment();
+            for (int staffIdx = startStaff; staffIdx < endStaff; ++staffIdx) {
+                  Element* firstElem = firstSegment->firstElement(staffIdx);
+                  ChordRest* lc = static_cast<ChordRest*>(firstElem);
+                  StaffText* s = new StaffText(this->score());
+                  s->setTrack(lc->track());
+                  s->setParent(firstSegment);
+                  if (lc->staff()->clef(lc->tick()) == ClefType::F) {
+                      s->setPlainText("C3");
+                  }
+                  else {
+                      s->setPlainText("C4");
+                  }
+                  s->setPlacement(Placement::ABOVE);
+                  s->setHmnGenerated(true);
+                  this->score()->undoAddElement(s);
+            }
       }
 
       QList<Chord*> chords;
       // loop through all notes in selection
-      foreach (Element* e, selection().elements()) {
+      foreach(Element* e, selection().elements()) {
             if (e->type() == ElementType::NOTE) {
                   Note* n = toNote(e);
                   if (n->noteType() == NoteType::INVALID)
@@ -3157,17 +3161,21 @@ void Score::cmdHamburgMusicNotation(bool showNotenames)
                         for (ScoreElement* e : *c->links()) {
                               Chord* lc = static_cast<Chord*>(e);
                               lc->toggleHmn(activateHmn, showNotenames);
-                              }
                         }
+                  }
                   else
                         c->toggleHmn(activateHmn, showNotenames);
-                  }
             }
+      }
+            
+      undoToggleHmn(activateHmn);
 
       if (noSelection)
             deselectAll();
 
       this->setLayoutAll();
+
+      return activateHmn;
       }
 
 //---------------------------------------------------------

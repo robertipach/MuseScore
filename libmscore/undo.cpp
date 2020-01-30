@@ -2478,4 +2478,34 @@ void MoveTremolo::undo(EditData*)
       trem->setParent(oldC1);
       }
 
+void ToggleHmn::redo(EditData*)
+      {
+      if (activate) {
+            for (MuseScoreView* msv : score->getViewer()) {
+                  msv->disableNoteEditMode();
+                  }
+            }
+      else {
+            for (MuseScoreView* msv : score->getViewer()) {
+                  msv->enableNoteEditMode();
+                  }
+            }
+      score->setHmnActive(activate);
+      }
+
+void ToggleHmn::undo(EditData*)
+      {
+      if (!activate) {
+            for (MuseScoreView* msv : score->getViewer()) {
+                  msv->disableNoteEditMode();
+                  }
+            }
+      else {
+            for (MuseScoreView* msv : score->getViewer()) {
+                  msv->enableNoteEditMode();
+                  }
+            }
+      score->setHmnActive(!activate);
+      }
+
 }

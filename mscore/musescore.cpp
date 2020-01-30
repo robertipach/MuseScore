@@ -1019,6 +1019,7 @@ MuseScore::MuseScore()
 
       setObjectName("MuseScore");
       _sstate = STATE_INIT;
+      _sstateNormalSaved = STATE_NORMAL;
       setWindowTitle(QString(MUSESCORE_NAME_VERSION));
       setIconSize(QSize(preferences.getInt(PREF_UI_THEME_ICONWIDTH) * guiScaling, preferences.getInt(PREF_UI_THEME_ICONHEIGHT) * guiScaling));
 
@@ -4357,6 +4358,9 @@ void MuseScore::changeState(ScoreState val)
                   break;
             case STATE_LOCK:
                   showModeText(tr("Score locked"));
+                  break;
+            case STATE_NORMAL_NO_ENTRY:
+                  showModeText(tr("Note entry disabled"));
                   break;
             default:
                   qFatal("MuseScore::changeState: illegal state %d", val);
