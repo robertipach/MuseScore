@@ -3104,9 +3104,7 @@ bool Score::cmdHamburgMusicNotation(bool showNotenames)
       {
       qDebug("Toggle hamburg music notation");
 
-      bool noSelection = !selection().isRange();
-      if (noSelection)
-            cmdSelectAll();
+      cmdSelectAll();
 
       if (!selection().startSegment()) // empty score?
             return false;
@@ -3116,7 +3114,6 @@ bool Score::cmdHamburgMusicNotation(bool showNotenames)
 
       bool activateHmn = !this->staff(startStaff)->hmnActive();
 
-      this->undoChangeProperty(Pid::HMN_ACTIVE, activateHmn);
       for(int staffIdx = startStaff; staffIdx < endStaff; ++staffIdx)
             this->staff(staffIdx)->undoChangeProperty(Pid::HMN_ACTIVE, activateHmn);
 
@@ -3170,9 +3167,7 @@ bool Score::cmdHamburgMusicNotation(bool showNotenames)
             
       undoToggleHmn(activateHmn);
 
-      if (noSelection)
-            deselectAll();
-
+      deselectAll();
       this->setLayoutAll();
 
       return activateHmn;
