@@ -3118,6 +3118,25 @@ void Score::cmdHamburgMusicNotation(bool showNotenames)
       for(int staffIdx = startStaff; staffIdx < endStaff; ++staffIdx)
             this->staff(staffIdx)->undoChangeProperty(Pid::HMN_ACTIVE, activateHmn);
 
+      // add octave designator
+      Segment* firstSegment = selection().firstChordRestSegment();
+      for (int staffIdx = startStaff; staffIdx < endStaff; ++staffIdx) {
+          Element* firstElem = firstSegment->firstElement(staffIdx);
+          ChordRest* lc = static_cast<ChordRest*>(firstElem);
+          StaffText* s = new StaffText(this->score());
+          s->setTrack(lc->track());
+          s->setParent(firstSegment);
+          if (lc->staff()->clef(lc->tick()) == ClefType::F) {
+              s->setPlainText("C3");
+          }
+          else {
+              s->setPlainText("C4");
+          }
+          s->setPlacement(Placement::ABOVE);
+          s->setHmnGenerated(true);
+          this->score()->undoAddElement(s);
+      }
+
       QList<Chord*> chords;
       // loop through all notes in selection
       foreach (Element* e, selection().elements()) {
