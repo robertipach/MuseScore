@@ -1516,6 +1516,7 @@ qreal Staff::lineDistance(const Fraction& tick) const
 
 void Staff::setHmnActive(bool active)
       {
+            this->setDefaultClefType(this->clefType(Fraction(0,1)));
             this->staffType(Fraction(0, 1))->setGenClef(!active);
             _hmnActive = active;
       }
